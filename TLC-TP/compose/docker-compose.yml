@@ -1,0 +1,60 @@
+version: '3.8'
+services:
+  back:
+    image: myback:latest
+    environment:
+      - quarkus.datasource.jdbc.url=jdbc:mysql://db:3306/tlc?useUnicode=true&serverTimezone=Europe/Paris
+      - doodle.internalPadUrl=http://etherpad:9001/
+      - doodle.externalPadUrl=http://slocketlc.pad.diverse-team.fr:8000/
+    links:
+      - db
+    restart: always
+
+  font:
+    image: myfont:latest
+    volumes: 
+      - ./server-confs/api.conf:/server-confs/api.conf
+    ports:
+      - 8000:8080
+    environment:
+    # Ensemble des endpoints pour lequel il générera des certificats
+      - SERVER_NAME=slocketlc.doodle.diverse-team.fr slocketlc.pad.diverse-team.fr slocketlc.phpmyadmin.diverse-team.fr
+      - SERVE_FILES=yes
+      - DISABLE_DEFAULT_SERVER=no
+    # Transmission de l'IP publique vers les containers
+      - PROXY_REAL_IP=yes
+#      - MAX_CLIENT_SIZE=100m
+#      - USE_ANTIBOT=captcha
+# Configuration de letencrypt
+      - AUTO_LETS_ENCRYPT=no
+# redirect du 80 vers 443 automatique
+      - REDIRECT_HTTP_TO_HTTPS=no
+      - USE_LIMIT_REQ=no
+# Désactivation http2
+      - HTTP2=no
+# Paramétrage des entêtes http
+      - FEATURE_POLICY=accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; display-capture 'none'; document-domain 'none'; encrypted-media 'none'; fullscreen 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'none'; sync-xhr 'self'; usb 'none'; vibrate 'none'; vr 'none'
+  db:
+      image: mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=tlc
+        - MYSQL_USER=tlc
+        - MYSQL_PASSWORD=tlc
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links: 
+      - db
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    restart: always
+  etherpad:
+    image: etherpad/etherpad:stable
+    volumes:
+      - ./APIKEY.txt:/opt/etherpad-lite/APIKEY.txt
+  mail:
+    image: bytemark/smtp
+    restart: always
+    ports:
+      - "2525:25" 
