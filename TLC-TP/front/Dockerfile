@@ -1,8 +1,10 @@
 
 FROM node:14 as build
+
+
+ADD https://api.github.com/repos/StefanLocke/doodlestudent/git/refs/heads/$BRANCH version.json
 RUN git clone https://github.com/StefanLocke/doodlestudent.git
 WORKDIR /doodlestudent/front
-
 RUN npm install
 RUN npm run build
 

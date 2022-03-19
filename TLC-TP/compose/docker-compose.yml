@@ -1,8 +1,7 @@
 version: '3.8'
 services:
   back:
-  
-    image: myback:latest
+    build: ../back
     environment:
       - quarkus.datasource.jdbc.url=jdbc:mysql://db:3306/tlc?useUnicode=true&serverTimezone=Europe/Paris
       - doodle.internalPadUrl=http://etherpad:9001/
