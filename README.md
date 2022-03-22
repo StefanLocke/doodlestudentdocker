@@ -16,3 +16,4 @@ Port =  3000 - grafana (admin - changeme)
         8000 - front
         8081 - back
 ```
+le fichier ect/host est changer pour cree un mini DNS qui redirige les addresses ci dessu en localhost (127.0.0.1)
