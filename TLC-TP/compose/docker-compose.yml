@@ -1,4 +1,10 @@
 version: '3.8'
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+
 services:
   back:
     build: ../back
@@ -9,7 +15,8 @@ services:
     links:
       - db
     restart: always
-
+    ports:
+      - 8081:8080
   font:
     build: ../front
     volumes: 
@@ -18,7 +25,7 @@ services:
       - 8000:8080
     environment:
     # Ensemble des endpoints pour lequel il générera des certificats
-      - SERVER_NAME=slocketlc.doodle.diverse-team.fr slocketlc.pad.diverse-team.fr slocketlc.phpmyadmin.diverse-team.fr
+      - SERVER_NAME=slocketlc.doodle.diverse-team.fr slocketlc.pad.diverse-team.fr slocketlc.phpmyadmin.diverse-team.fr slocketlc.monitor.diverse-team.fr
       - SERVE_FILES=yes
       - DISABLE_DEFAULT_SERVER=no
     # Transmission de l'IP publique vers les containers
@@ -41,6 +48,7 @@ services:
         - MYSQL_DATABASE=tlc
         - MYSQL_USER=tlc
         - MYSQL_PASSWORD=tlc
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     links: 
@@ -53,8 +61,33 @@ services:
     image: etherpad/etherpad:stable
     volumes:
       - ./APIKEY.txt:/opt/etherpad-lite/APIKEY.txt
+
   mail:
     image: bytemark/smtp
     restart: always
     ports:
-      - "2525:25" 
+      - "2525:25"
+
+  monitor:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+
+  monitor-front: 
+    image: grafana/grafana-enterprise:8.4.4-ubuntu
+    ports: 
+    - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=changeme
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/datasources.yaml:/etc/grafana/provisioning/datasources/sample.yaml
+      - ./grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/all.yaml
+      - ./grafana/default.json:/var/lib/grafana/dashboards/default.json
+      #- grafana_data:/var/lib/grafana
+
+
+

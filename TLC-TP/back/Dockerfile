@@ -3,6 +3,7 @@ FROM openjdk:11
 RUN apt-get update
 RUN apt-get install git
 
+ADD https://api.github.com/repos/StefanLocke/doodlestudent/git/refs/heads/main version.json
 RUN git clone https://github.com/StefanLocke/doodlestudent.git
 
 WORKDIR /doodlestudent/api

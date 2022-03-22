@@ -2,7 +2,7 @@
 FROM node:14 as build
 
 
-ADD https://api.github.com/repos/StefanLocke/doodlestudent/git/refs/heads/$BRANCH version.json
+ADD https://api.github.com/repos/StefanLocke/doodlestudent/git/refs/heads/main version.json
 RUN git clone https://github.com/StefanLocke/doodlestudent.git
 WORKDIR /doodlestudent/front
 RUN npm install
