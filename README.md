@@ -1,8 +1,16 @@
 # doodlestudentdocker
-TP de TLC.
+Partie DOCKER du TP de TLC.
 Je suis arriver a la tache 6.
 Normalement, le grafana est automatiquement connecte au prometheus grace au provisionning.
 Mais je n'ai pas reussit a faire marcher l'import automatique de dashboard
+
+Les Gits utilise :
+```
+https://github.com/StefanLocke/doodlestudentdocker
+```
+```
+https://github.com/StefanLocke/doodlestudent
+```
 
 ### Notes :
 
@@ -29,4 +37,4 @@ Ce qui a ete implementer :
  ```       
 Tout cela est lancer avec un simple docker-compose up, qui est dans le fichier Compose
         
-        
+Il existe aussi un CI/CD avec GitHub actions, au moment du push git, un runner est appeler pour clone le projet et lancer le docker-compose.       
